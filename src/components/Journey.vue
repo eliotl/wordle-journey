@@ -1,6 +1,13 @@
 <template lang="pug">
-.row-holder(v-for="word in words")
-  WordRow(:word="word", target="bar")
+div
+  .inputRow(v-for="thing in Array(7)")
+    input(@click="$event.target.select()", maxlength=5)
+  .spacer
+  button Embark
+  .spacer
+  .spacer
+  .row-holder(v-for="word in guessWords")
+    WordRow(:word="word", target="bar")
 </template>
 
 <script lang="ts">
@@ -13,7 +20,7 @@ import WordRow from './WordRow.vue';
   },
 })
 export default class Journey extends Vue {
-    get words() {
+    get guessWords() {
         return [
             "guess",
             "hwhat",
@@ -21,17 +28,34 @@ export default class Journey extends Vue {
             "nexxt"
         ]
     }
-
 }
 
 
 </script>
 
-<style>
+<style scoped>
 
 .row-holder{
 }
 
+.spacer{
+    height: 1em;
+}
+
+input{
+  text-transform: uppercase;
+  margin: auto;
+  text-align: center;
+  font-family: monospace;
+  width: 6em;
+  font-size: 1.2 em;
+  background: WhiteSmoke;
+  border: 0.5px groove;
+}
+
+button {
+    font-variant: small-caps;
+}
 
 </style>
 
