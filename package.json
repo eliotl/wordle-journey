@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
+    "pinia": "^2.0.14",
     "pug-plain-loader": "^1.1.0",
     "typescript": "^4.7.4",
     "vue": "^3.2.13",
@@ -30,6 +31,7 @@
     "eslint-plugin-vue": "^8.0.3",
     "pug": "^3.0.2",
     "typescript": "~4.5.5",
+    "vue-cli-plugin-pinia": "~0.1.3",
     "vue-pug-loader": "^1.1.27"
   },
   "eslintConfig": {
