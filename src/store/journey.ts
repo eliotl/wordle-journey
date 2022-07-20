@@ -57,12 +57,12 @@ enum Color {
   grey = "grey",
 }
 
-interface GuessSquare {
+export interface GuessSquare {
   color: Color;
   letter: string;
 }
 
-interface GuessRow {
+export interface GuessRow {
   squares: Array<GuessSquare>;
   words: Array<string>;
   remainder: string;

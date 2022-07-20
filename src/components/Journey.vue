@@ -11,8 +11,8 @@ div
   p {{double}}
   .spacer
   .spacer
-  .row-holder(v-for="word in guessWords")
-    WordRow(:word="word", target="bar")
+  .row-holder(v-for="result in results")
+    WordRow(:result="result")
 </template>
 
 <script lang="ts">

@@ -1,39 +1,43 @@
 <template lang="pug">
 div.parent-row
   div.row
-    div.column(v-for="letter in letters")
-      LetterSquare(:letter="letter")
-  p {{ double }}
+    div.column(v-for="square in guessSquares")
+      LetterSquare(:square="square")
+  p {{ remainder }}
 </template>
 
 <script lang="ts">
+
+import { PropType } from 'vue';
 import { Options, Vue } from 'vue-class-component';
 import LetterSquare from './LetterSquare.vue';
-import { useJourneyStore } from '@/store/journey';
+import { useJourneyStore, GuessRow } from '@/store/journey';
 
 @Options({
   components: {
     LetterSquare,
   },
   props: {
-    word: String,
-    target: String, 
+    result: {} as PropType<GuessRow>,
   }
 })
 export default class WordRow extends Vue {
-  word!: string;
-  target!: string;
+  result!: GuessRow;
 
-  get letters() {
-    return [...this.word]
+  get guessSquares() {
+    return this.result.squares;
+  }
+
+  get wordsLeft() {
+    return this.result.words;
   }
   
   get store ()  {
     return useJourneyStore();
   }
 
-  get double() {
-    return this.store.double;
+  get remainder() {
+    return this.result.remainder;
   }
 
 }

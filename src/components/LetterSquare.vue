@@ -1,20 +1,29 @@
 <template lang="pug">
-div.green
+div(:class="color")
     span.guess-span {{letter}}
 </template>
 
 <script lang="ts">
+import { PropType } from 'vue';
 import { Options, Vue } from 'vue-class-component';
+import { GuessSquare } from '@/store/journey';
 
 @Options({
   props: {
-    letter: String,
-    color: String, 
+    square: {} as PropType<GuessSquare>,
   }
 })
 export default class LetterSquare extends Vue {
-  letter!: string;
-  color!: string;
+  square!: GuessSquare;
+
+  get color() {
+    return this.square.color;
+  }
+  get letter() {
+    return this.square.letter;
+  }
+
+  
 }
 
 </script>
