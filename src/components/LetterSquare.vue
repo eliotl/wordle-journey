@@ -15,6 +15,7 @@ import { Options, Vue } from 'vue-class-component';
 export default class LetterSquare extends Vue {
   letter!: string;
   color!: string;
+
 }
 </script>
 

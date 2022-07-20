@@ -3,7 +3,8 @@ div
   .inputRow(v-for="thing in Array(7)")
     input(@click="$event.target.select()", maxlength=5)
   .spacer
-  button Embark
+  button(@click="thingA") Embark
+  p {{double}}
   .spacer
   .spacer
   .row-holder(v-for="word in guessWords")
@@ -13,6 +14,8 @@ div
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import WordRow from './WordRow.vue';
+import { useInputStore } from '@/store/index';
+import { useJourneyStore } from '@/store/journey';
 
 @Options({
   components: {
@@ -28,6 +31,24 @@ export default class Journey extends Vue {
             "nexxt"
         ]
     }
+
+    get inputStore() {
+      return useInputStore();
+    }
+
+    get journeyStore() {
+      return useJourneyStore();
+    }
+
+    get double() {
+      return this.journeyStore.double;
+    }
+    
+    thingA() {
+      // debugger;  // eslint-disable-line no-debugger
+      this.journeyStore.increment();
+    }
+
 }
 
 

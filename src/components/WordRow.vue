@@ -3,11 +3,13 @@ div.parent-row
   div.row
     div.column(v-for="letter in letters")
       LetterSquare(:letter="letter")
+  p {{ double }}
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import LetterSquare from './LetterSquare.vue';
+import { useJourneyStore } from '@/store/journey';
 
 @Options({
   components: {
@@ -25,6 +27,15 @@ export default class WordRow extends Vue {
   get letters() {
     return [...this.word]
   }
+  
+  get store: StoreDefinition ()  {
+    return useJourneyStore();
+  }
+
+  get double() {
+    return this.store.double;
+  }
+
 }
 </script>
 
