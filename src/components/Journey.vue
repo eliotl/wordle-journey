@@ -2,13 +2,12 @@
 div
   .inputRow(v-for="(item, index) in Array(7)")
     input(
-      @click="$event.target.select()",
+      @click="$event.target?.select()",
       maxlength=5,
       v-model="inputWords[index]"
     )
   .spacer
   button(@click="runJourney") Embark
-  p {{double}}
   .spacer
   .spacer
   .row-holder(v-for="result in results")
@@ -50,14 +49,9 @@ export default class Journey extends Vue {
     get store() {
       return useJourneyStore();
     }
-
-    get double() {
-      return this.store.double;
-    }
     
     runJourney() {
       this.store.setValidWords(this.store.inputs);
-      this.store.increment();
       this.store.runWords();
       console.log(this.store.resultRows)
     }
@@ -68,9 +62,6 @@ export default class Journey extends Vue {
 </script>
 
 <style scoped>
-
-.row-holder{
-}
 
 .spacer{
     height: 1em;

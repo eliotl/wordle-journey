@@ -5,7 +5,6 @@ import { filter, map, lowerCase, difference, intersection } from 'lodash/fp'
 
 export const useJourneyStore = defineStore('journey', {
   state: () => ({ 
-    count: 0,
     inputWords: Array(7),
     guessWords: [] as Array<string>,
     resultRows: [] as Array<GuessRow>,
@@ -13,15 +12,11 @@ export const useJourneyStore = defineStore('journey', {
   }),
   getters: {
     inputs: state => state.inputWords,
-    double: state => state.count * 2,
     guesses: state => state.guessWords,
     targetWord: state => state.guessWords[state.guessWords.length - 1],
     results: state => state.resultRows,
   },
   actions: {
-    increment() {
-      this.count++
-    },
     setGuesses(guessWords: Array<string>) {
       this.guessWords = guessWords
     },
