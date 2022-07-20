@@ -1,9 +1,13 @@
 <template lang="pug">
 div
-  .inputRow(v-for="thing in Array(7)")
-    input(@click="$event.target.select()", maxlength=5)
+  .inputRow(v-for="(item, index) in Array(7)")
+    input(
+      @click="$event.target.select()",
+      maxlength=5,
+      v-model="inputWords[index]"
+    )
   .spacer
-  button(@click="thingA") Embark
+  button(@click="runJourney") Embark
   p {{double}}
   .spacer
   .spacer
@@ -14,7 +18,6 @@ div
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import WordRow from './WordRow.vue';
-import { useInputStore } from '@/store/index';
 import { useJourneyStore } from '@/store/journey';
 
 @Options({
@@ -32,21 +35,31 @@ export default class Journey extends Vue {
         ]
     }
 
-    get inputStore() {
-      return useInputStore();
+    get inputWords() {
+      return this.store.inputWords
     }
 
-    get journeyStore() {
+    get guesses() {
+      return this.store.guesses
+    }
+
+    get results() {
+      return this.store.results
+    }
+
+    get store() {
       return useJourneyStore();
     }
 
     get double() {
-      return this.journeyStore.double;
+      return this.store.double;
     }
     
-    thingA() {
-      // debugger;  // eslint-disable-line no-debugger
-      this.journeyStore.increment();
+    runJourney() {
+      this.store.setValidWords(this.store.inputs);
+      this.store.increment();
+      this.store.runWords();
+      console.log(this.store.resultRows)
     }
 
 }

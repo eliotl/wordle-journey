@@ -15,11 +15,10 @@ import { Options, Vue } from 'vue-class-component';
 export default class LetterSquare extends Vue {
   letter!: string;
   color!: string;
-
 }
+
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .green{
     background: #6aaa64;

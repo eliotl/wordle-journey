@@ -1,25 +1,24 @@
 import { defineStore } from 'pinia'
+import { filter } from 'lodash/fp'
 
 export const useInputStore = defineStore('input', {
   state: () => ({ 
     inputWords: Array(7),
-    targetWord: "",
+    validWords: [] as Array<string>,
     count: 0 
   }),
   getters: {
     double: state => state.count * 2,
     inputs: state => state.inputWords,
-    lastInput: state => state.inputWords[state.inputWords.length-1]
+    validInputs: state => state.validWords,
+    targetWord: state => state.validWords[state.validWords.length-1]
   },
   actions: {
     increment() {
       this.count++
     },
-    setWord(index: number, word: string) {
-      this.inputWords[index] = word;
-    },
-    setTargetWord(word: string) {
-      this.targetWord = word;
+    setValidWords(inputWords: Array<string>) {
+      this.validWords = filter( word => /^[a-zA-Z.]{5}$/.test(word), inputWords)
     },
   },
 })

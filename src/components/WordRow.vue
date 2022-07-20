@@ -28,7 +28,7 @@ export default class WordRow extends Vue {
     return [...this.word]
   }
   
-  get store: StoreDefinition ()  {
+  get store ()  {
     return useJourneyStore();
   }
 
