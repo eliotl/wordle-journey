@@ -80,6 +80,13 @@ class WordleMap {
     // debugger; // eslint-disable-line no-debugger
   }
   
+  /**
+   * Populates an object mapping each letter at each index
+   * to every valid word in Wordle that contains it
+   * @example
+   * // this.singleMap['a'][0] = ["abyss", "actor", "adult", "algae", ...]
+   * // this.singleMap['g'][2] = ["algae", "bagel", "cigar", "eagle", ...]
+   */
   mapSingleLetters() {
     for (const word of this.words){
       for (const [i, char] of [...word].entries()){
@@ -103,6 +110,10 @@ class WordleMap {
     this.wordsLeft = [...words]
   }
 
+  /**
+   * Updates the remaining valid words based on whether
+   * the letter's square is grey, yellow, or green.
+   */
   updateSingleResult(result: Color, letter: string, index: number) {
     if (result == Color.grey){
       this.updateGrey(letter)
@@ -115,23 +126,43 @@ class WordleMap {
     }
   }
 
+  /**
+   * Removes all remaining words with a given letter.
+   */
   updateGrey(letter: string){
     const invalidWords = this.singleMap[letter][-1]
     this.wordsLeft = difference(this.wordsLeft, invalidWords)
   }
 
-  updateYellow(letter: string, index: number){
+  /**
+   * Removes all remaining words with a given letter at an index, 
+   * and removes all words that don't have that letter at another index.
+   */
+   updateYellow(letter: string, index: number){
     const invalidWords = this.singleMap[letter][index]
     const validWords = difference(this.singleMap[letter][-1], invalidWords)
     this.wordsLeft = intersection(validWords, this.wordsLeft)
   }
 
+  /**
+   * Removes all remaining words that do not have a given letter
+   * at an index.
+   */
   updateGreen(letter: string, index: number){
     const validWords = this.singleMap[letter][index]
     this.wordsLeft = intersection(validWords, this.wordsLeft)
   }
 
-  compareLetter(letter: string, index: number, targetWord: string){
+  /**
+   * Determines whether a guessed letter should be read as grey, green, yor yellow.
+   * This result is naive to repeated letters and may be overwritten if a guess or target
+   * has repeated letters.
+   * @param letter 
+   * @param index 
+   * @param targetWord 
+   * @returns {Color} The color of the guessed letter
+   */
+  compareLetter(letter: string, index: number, targetWord: string): Color{
     if (!(targetWord.includes(letter))){
       return Color.grey
     }
