@@ -17,11 +17,12 @@ export const useJourneyStore = defineStore('journey', {
     results: state => state.resultRows,
   },
   actions: {
-    setGuesses(guessWords: string[]) {
-      this.guessWords = guessWords
-    },
     setValidWords(inputWords: string[]) {
       this.guessWords = map(lowerCase)(filter( word => /^[a-zA-Z.]{5}$/.test(word), inputWords))
+    },
+    resetState(){
+      this.wordleMap.resetWordsLeft()
+      this.resultRows = []
     },
     runWords(){
       for (const guess of this.guesses){

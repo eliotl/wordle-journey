@@ -58,9 +58,8 @@ export default class Journey extends Vue {
     
     runJourney() {
       this.store.setValidWords(this.store.inputs);
+      this.store.resetState();
       this.store.runWords();
-      console.log(this.store)
-      console.log(this.store.wordleMap)
     }
 
 }
