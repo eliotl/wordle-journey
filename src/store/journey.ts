@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { words } from '@/assets/wordle_words'
-import { Dictionary, repeat } from 'lodash'
-import { filter, map, lowerCase, difference, intersection, flatten, pickBy } from 'lodash/fp'
+import { Dictionary } from 'lodash'
+import { filter, map, toLower, difference, intersection, flatten, pickBy } from 'lodash/fp'
 
 export const useJourneyStore = defineStore('journey', {
   state: () => ({ 
@@ -18,7 +18,7 @@ export const useJourneyStore = defineStore('journey', {
   },
   actions: {
     setValidWords(inputWords: string[]) {
-      this.guessWords = map(lowerCase)(filter( word => /^[a-zA-Z.]{5}$/.test(word), inputWords))
+      this.guessWords = map(toLower)(filter( word => /^[a-zA-Z.]{5}$/.test(word), inputWords))
     },
     resetState(){
       this.wordleMap.resetWordsLeft()
@@ -35,6 +35,7 @@ export const useJourneyStore = defineStore('journey', {
      */
     runSingleWord(guessWord: string){
       let guessSquares: GuessSquare[] = []
+      // debugger; // eslint-disable-line no-debugger
       for (const [i, char] of [...guessWord].entries()){
         const result = this.wordleMap.compareLetter(char, i, this.targetWord)
         this.wordleMap.updateSingleResult(result, char, i)
@@ -76,8 +77,8 @@ export interface GuessRow {
 class WordleMap {
   words: string[]
   alphabet: string[]
-  singleMap: Dictionary<Dictionary<string[]>> = {}
-  repeatMap: Dictionary<Dictionary<string[]>> = {}
+  singleMap: Dictionary<Dictionary<string[]>> = {'.': {'-1': []}}
+  repeatMap: Dictionary<Dictionary<string[]>> = {'.': {'-1': []}}
   wordsLeft: string[]
 
   constructor(words: string[]) {

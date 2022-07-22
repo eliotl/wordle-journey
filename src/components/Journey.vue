@@ -55,11 +55,16 @@ export default class Journey extends Vue {
     toggleWordsVisibility() {
       this.wordsVisible = ! this.wordsVisible;
     }
+
+    // selectEvent(eventTarget: Element) {
+    //   eventTarget.select()
+    // }
     
     runJourney() {
       this.store.setValidWords(this.store.inputs);
       this.store.resetState();
       this.store.runWords();
+      console.log(this.store)
     }
 
 }
