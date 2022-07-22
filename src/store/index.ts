@@ -4,7 +4,7 @@ import { filter } from 'lodash/fp'
 export const useInputStore = defineStore('input', {
   state: () => ({ 
     inputWords: Array(7),
-    validWords: [] as Array<string>,
+    validWords: [] as string[],
     count: 0 
   }),
   getters: {
@@ -17,7 +17,7 @@ export const useInputStore = defineStore('input', {
     increment() {
       this.count++
     },
-    setValidWords(inputWords: Array<string>) {
+    setValidWords(inputWords: string[]) {
       this.validWords = filter( word => /^[a-zA-Z.]{5}$/.test(word), inputWords)
     },
   },

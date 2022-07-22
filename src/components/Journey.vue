@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  .inputRow(v-for="(item, index) in Array(7)")
+  .inputRow(v-for="(_, index) in Array(7)")
     input(
       @click="$event.target?.select()",
       maxlength=5,
@@ -8,10 +8,11 @@ div
     )
   .spacer
   button(@click="runJourney") Embark
+  button(@click="toggleWordsVisibility" v-if="displayButton") {{buttonText}}
   .spacer
   .spacer
   .row-holder(v-for="result in results")
-    WordRow(:result="result")
+    WordRow(:result="result", :showWords="wordsVisible")
 </template>
 
 <script lang="ts">
@@ -25,14 +26,7 @@ import { useJourneyStore } from '@/store/journey';
   },
 })
 export default class Journey extends Vue {
-    get guessWords() {
-        return [
-            "guess",
-            "hwhat",
-            "words",
-            "nexxt"
-        ]
-    }
+    wordsVisible: boolean = false;
 
     get inputWords() {
       return this.store.inputWords
@@ -49,11 +43,24 @@ export default class Journey extends Vue {
     get store() {
       return useJourneyStore();
     }
+
+    get displayButton() {
+      return this.results.length > 0;
+    }
+
+    get buttonText() {
+      return this.wordsVisible ? 'Hide words' : 'Show words';
+    }
+
+    toggleWordsVisibility() {
+      this.wordsVisible = ! this.wordsVisible;
+    }
     
     runJourney() {
       this.store.setValidWords(this.store.inputs);
       this.store.runWords();
-      console.log(this.store.resultRows)
+      console.log(this.store)
+      console.log(this.store.wordleMap)
     }
 
 }

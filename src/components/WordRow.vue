@@ -4,6 +4,7 @@ div.parent-row
     div.column(v-for="square in guessSquares")
       LetterSquare(:square="square")
   p {{ remainder }}
+  p(v-if="showWords") {{displayWords}}
 </template>
 
 <script lang="ts">
@@ -13,16 +14,20 @@ import { Options, Vue } from 'vue-class-component';
 import LetterSquare from './LetterSquare.vue';
 import { useJourneyStore, GuessRow } from '@/store/journey';
 
+import { shuffle } from 'lodash/fp';
+
 @Options({
   components: {
     LetterSquare,
   },
   props: {
     result: {} as PropType<GuessRow>,
+    showWords: Boolean,
   }
 })
 export default class WordRow extends Vue {
   result!: GuessRow;
+  showWords!: boolean;
 
   get guessSquares() {
     return this.result.squares;
@@ -40,6 +45,19 @@ export default class WordRow extends Vue {
     return this.result.remainder;
   }
 
+  /**
+   * Shows a random array of five or fewer words that were still possible
+   * after the current guess.
+   */
+  get displayWords() {
+    const words = shuffle(this.wordsLeft).slice(0,5)
+    let wordString = words.join(", ")
+    if (this.wordsLeft.length > words.length) {
+      wordString = wordString.concat('…')
+    }
+    return wordString
+  }
+
 }
 </script>
 
@@ -53,8 +71,8 @@ export default class WordRow extends Vue {
 }
 .row {
   display: table;
-  table-layout: fixed; /*Optional*/
-  border-spacing: 0.25em; /*Optional*/
+  table-layout: fixed;
+  border-spacing: 0.25em;
 }
 .column {
   display: table-cell;

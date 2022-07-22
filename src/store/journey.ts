@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { words } from '@/assets/wordle_words'
-import { Dictionary, result } from 'lodash'
-import { filter, map, lowerCase, difference, intersection } from 'lodash/fp'
+import { Dictionary, repeat } from 'lodash'
+import { filter, map, lowerCase, difference, intersection, flatten, pickBy } from 'lodash/fp'
 
 export const useJourneyStore = defineStore('journey', {
   state: () => ({ 
     inputWords: Array(7),
-    guessWords: [] as Array<string>,
-    resultRows: [] as Array<GuessRow>,
+    guessWords: [] as string[],
+    resultRows: [] as GuessRow[],
     wordleMap: new WordleMap(words)
   }),
   getters: {
@@ -17,10 +17,10 @@ export const useJourneyStore = defineStore('journey', {
     results: state => state.resultRows,
   },
   actions: {
-    setGuesses(guessWords: Array<string>) {
+    setGuesses(guessWords: string[]) {
       this.guessWords = guessWords
     },
-    setValidWords(inputWords: Array<string>) {
+    setValidWords(inputWords: string[]) {
       this.guessWords = map(lowerCase)(filter( word => /^[a-zA-Z.]{5}$/.test(word), inputWords))
     },
     runWords(){
@@ -28,13 +28,20 @@ export const useJourneyStore = defineStore('journey', {
         this.runSingleWord(guess)
       }
     },
+    /**
+     * Check the result of guessing one word and update the results of this.resultRows
+     * @param {string} guessWord The word a user guessed
+     */
     runSingleWord(guessWord: string){
-      const guessSquares: Array<GuessSquare> = []
+      let guessSquares: GuessSquare[] = []
       for (const [i, char] of [...guessWord].entries()){
         const result = this.wordleMap.compareLetter(char, i, this.targetWord)
         this.wordleMap.updateSingleResult(result, char, i)
         guessSquares.push({'color': result, 'letter': char})
       }
+
+      guessSquares = this.wordleMap.handleRepeatLetters(guessWord, this.targetWord, guessSquares)
+
       this.resultRows.push({
         'squares': guessSquares,
         'words': this.wordleMap.wordsLeft,
@@ -58,34 +65,36 @@ export interface GuessSquare {
 }
 
 export interface GuessRow {
-  squares: Array<GuessSquare>;
-  words: Array<string>;
+  squares: GuessSquare[];
+  words: string[];
   remainder: string;
   emojis: string;
 }
 
 
 class WordleMap {
-  words: Array<string>
-  alphabet: Array<string>
-  singleMap: Dictionary<Dictionary<Array<string>>> = {}
-  wordsLeft: Array<string>
-  // doubleMap: Dictionary<Dictionary<Set<string>>> = {}
+  words: string[]
+  alphabet: string[]
+  singleMap: Dictionary<Dictionary<string[]>> = {}
+  repeatMap: Dictionary<Dictionary<string[]>> = {}
+  wordsLeft: string[]
 
-  constructor(words: Array<string>) {
+  constructor(words: string[]) {
     this.words = words;
     this.alphabet = [...'abcdefghijklmnopqrstuvwxyz'];
     this.mapSingleLetters()
+    this.mapRepeatLetters()
     this.wordsLeft = [...words]
-    // debugger; // eslint-disable-line no-debugger
   }
   
   /**
    * Populates an object mapping each letter at each index
-   * to every valid word in Wordle that contains it
+   * to every valid word in Wordle that contains it. Index -1 contains all
+   * words that contain the letter.
    * @example
    * // this.singleMap['a'][0] = ["abyss", "actor", "adult", "algae", ...]
    * // this.singleMap['g'][2] = ["algae", "bagel", "cigar", "eagle", ...]
+   * // this.singleMap['0'][-1] = ["actor", "brook", "often", "salvo", ...]
    */
   mapSingleLetters() {
     for (const word of this.words){
@@ -105,6 +114,31 @@ class WordleMap {
       }
     }
   }
+
+  /**
+   * Populates an object mapping each letter that appears repeated
+   * to every valid word in Wordle that contains it
+   * @example
+   * // this.repeatMap['a'][2] = ["adapt", "agora", "llama", "papal", ...]
+   * // this.repeatMap['r'][3] = ["error", "rarer"]
+   */
+  mapRepeatLetters() {
+    for (const word of this.words){
+      const repeatIndexes = this.repeatLetterIndexes(word);
+
+      for (const [char, indexes] of Object.entries(repeatIndexes)){
+        const indexLen = indexes.length
+        if (!(char in this.repeatMap)){
+          this.repeatMap[char] = {}
+        }
+        if (!(indexLen in this.repeatMap[char])){
+          this.repeatMap[char][indexLen] = []
+        }
+        this.repeatMap[char][indexLen].push(word)
+      }
+    }
+  }
+
 
   resetWordsLeft(){
     this.wordsLeft = [...words]
@@ -174,23 +208,82 @@ class WordleMap {
     }
   }
 
-  // mapDoubleLetters() {
-  //   for (const word of this.words){
-  //     const foo: {} = {};
-  //     const doubleMap: Dictionary<Set<number>> = {}
-  //     for (const [i, char] of [...word].entries()){
-  //       const restOfWord = word.slice(0,i) + word.slice(i+1, word.length - 1);
-  //       if (restOfWord.includes(char)){
-  //         char in doubleMap ? doubleMap[char].add(i) : doubleMap[char] = new Set([i])
-  //       }
-  //     }
-  //     for (const [char, indexes] of Object.entries(doubleMap)){
-  //       if (indexes.size == 2){
-  //         this.doubleMap[]
-  //       }
-  //     }
-  //   }  
-  // }
+  greyRepeatedYellows(guessSquares: GuessSquare[], letter: string, quantity: number) {
+    let counter = 0
+    for (let i = guessSquares.length - 1; i >= 0; i--){
+      const square = guessSquares[i]
+      if (square.letter == letter && square.color == Color.yellow){
+        square.color = Color.grey
+        counter++;
+      }
+      if (counter >= quantity) {
+        break;
+      }
+    }
+    return guessSquares;
+  }
 
+  /**
+   * Removes words from this.wordsLeft that do not have at least the 
+   * given number of occurrences of a letter.
+   * 
+   * @param letter 
+   * @param {number} len The number of occurences of a letter to filter for. Must be > 1.
+   */
+  updateWordsByLength(letter: string, len: number){
+    const repeatMap = this.repeatMap[letter]
+    const validWords: string[] = []
+    for (const [repeatLen, validWordsByLen] of Object.entries(repeatMap)){
+      if (parseInt(repeatLen) >= len) {
+        validWords.push(...validWordsByLen)
+      }
+    }
+    this.wordsLeft = intersection(validWords, this.wordsLeft)
+  }
+
+  handleRepeatLetters(guessWord: string, targetWord: string, guessSquares: GuessSquare[]) {
+    const repeatIndexes = this.repeatLetterIndexes(guessWord);
+    const targetIndexes = this.getLetterIndexes(targetWord); 
+    for (const [char, indexes] of Object.entries(repeatIndexes)){
+      const targetLen = char in targetIndexes ? targetIndexes[char].length : 0
+      const guessLen = indexes.length
+
+      if (guessLen > targetLen && targetLen >= 1){
+        // keep targetLen & (> targetLen)
+        this.updateWordsByLength(char, targetLen)
+        guessSquares = this.greyRepeatedYellows(guessSquares, char, guessLen - targetLen)
+        // change extra yellows to greys right to left
+      }
+      else if (targetLen >= guessLen && guessLen > 1){
+        // keep guessLen & >>
+        this.updateWordsByLength(char, guessLen)
+        // kill guessLen - 1 & <<
+      }
+    }
+    return guessSquares
+  }
+
+  /**
+   * Returns a map of repeated letters to their indexes for a word
+   * @param word 
+   * @returns {Dictionary<number[]>} Returns the mapped letters that have repeats
+   */
+  repeatLetterIndexes(word: string): Dictionary<number[]> {
+    const letterIndexes = this.getLetterIndexes(word);
+    return pickBy( function(o: number[]) {return o.length > 1 })(letterIndexes)
+
+  }
+
+  /**
+   * Returns a map of all letters to their indexes for a word
+   * @param word 
+   */
+   getLetterIndexes(word: string): Dictionary<number[]> {    
+    const letterMap: Dictionary<number[]> = {}
+    for (const [i, char] of [...word].entries()){
+      char in letterMap ? letterMap[char].push(i) : letterMap[char] = [i];
+    }
+    return letterMap
+  }
 
 }
