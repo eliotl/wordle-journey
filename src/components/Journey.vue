@@ -16,7 +16,7 @@ div
   .spacer
   .spacer
   button(v-if="displayButton" @click="openModal") Share
-  Modal(:emojis="fullEmojiString")
+  Modal
 </template>
 
 <script lang="ts">
@@ -24,7 +24,6 @@ import { Options, Vue } from 'vue-class-component';
 import WordRow from './WordRow.vue';
 import Modal from './Modal.vue';
 import { useJourneyStore } from '@/store/journey';
-import { map } from 'lodash/fp';
 
 @Options({
   components: {
@@ -34,7 +33,6 @@ import { map } from 'lodash/fp';
 })
 export default class Journey extends Vue {
     wordsVisible: boolean = false;
-    modalVisible: boolean = false;
 
     get inputs() {
       return this.store.inputs
@@ -55,11 +53,6 @@ export default class Journey extends Vue {
     get displayButton() {
       return this.results.length > 0;
     }
-
-    get fullEmojiString() {
-      return map('emojis', this.results).join('\n')
-    }
-
     get buttonText() {
       return this.wordsVisible ? 'Hide words' : 'Show words';
     }

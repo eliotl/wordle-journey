@@ -33,12 +33,26 @@ export const useJourneyStore = defineStore('journey', {
       return emojis.join("")
     },
     runWords(){
-      for (const guess of this.guesses){
+      for (const guess of this.guesses.slice(0, -1)){
         this.runSingleWord(guess)
       }
-      this._resultRows[this._resultRows.length-1].remainder = '✅'
-      this._resultRows[this._resultRows.length-1].emojis = this.assembleEmojis(this._resultRows[this._resultRows.length-1].squares, '✅')
+      if (this.guesses.length < 7){
+        this.appendResult(this.getLastRow())
+      }
     },
+    appendResult(result: GuessRow){
+      this._resultRows.push(result)
+    },
+
+    getLastRow(): GuessRow{
+      return {
+        remainder: '✅',
+        emojis : '🟩🟩🟩🟩🟩 ✅',
+        words : [],
+        squares: map( (c: string) => Object({letter: c, color: Color.green}), [...this.targetWord])
+      }
+    },
+
     /**
      * Check the result of guessing one word and update the results of this._resultRows
      * @param {string} guessWord The word a user guessed
@@ -55,7 +69,7 @@ export const useJourneyStore = defineStore('journey', {
       const remainder = this._wordleMap.wordsLeft.length.toString()
       const emojis = this.assembleEmojis(guessSquares, remainder)
 
-      this._resultRows.push({
+      this.appendResult({
         'squares': guessSquares,
         'words': this._wordleMap.wordsLeft,
         'remainder': remainder,
@@ -76,12 +90,6 @@ enum Color {
   green = "green",
   yellow = "yellow",
   grey = "grey",
-}
-
-enum EmojiColor {
-  green = "🟩",
-  yellow = "🟨",
-  grey = "⬜️",
 }
 
 const emojiMapping: Dictionary<string> = {
