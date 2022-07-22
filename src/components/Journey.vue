@@ -4,7 +4,7 @@ div
     input(
       @click="$event.target?.select()",
       maxlength=5,
-      v-model="inputWords[index]"
+      v-model="inputs[index]"
     )
   .spacer
   button(@click="runJourney") Embark
@@ -13,23 +13,31 @@ div
   .spacer
   .row-holder(v-for="result in results")
     WordRow(:result="result", :showWords="wordsVisible")
+  .spacer
+  .spacer
+  button(v-if="displayButton" @click="openModal") Share
+  Modal(:emojis="fullEmojiString")
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import WordRow from './WordRow.vue';
+import Modal from './Modal.vue';
 import { useJourneyStore } from '@/store/journey';
+import { map } from 'lodash/fp';
 
 @Options({
   components: {
     WordRow,
+    Modal,
   },
 })
 export default class Journey extends Vue {
     wordsVisible: boolean = false;
+    modalVisible: boolean = false;
 
-    get inputWords() {
-      return this.store.inputWords
+    get inputs() {
+      return this.store.inputs
     }
 
     get guesses() {
@@ -48,25 +56,29 @@ export default class Journey extends Vue {
       return this.results.length > 0;
     }
 
+    get fullEmojiString() {
+      return map('emojis', this.results).join('\n')
+    }
+
     get buttonText() {
       return this.wordsVisible ? 'Hide words' : 'Show words';
+    }
+
+    openModal() {
+      this.store.showModal();
     }
 
     toggleWordsVisibility() {
       this.wordsVisible = ! this.wordsVisible;
     }
-
-    // selectEvent(eventTarget: Element) {
-    //   eventTarget.select()
-    // }
     
     runJourney() {
+      if (this.guesses.length > 0){
+        this.store.resetState();
+      }
       this.store.setValidWords(this.store.inputs);
-      this.store.resetState();
       this.store.runWords();
-      console.log(this.store)
     }
-
 }
 
 
@@ -92,6 +104,10 @@ input{
 button {
     font-variant: small-caps;
 }
+
+
+
+
 
 </style>
 

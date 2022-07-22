@@ -1,55 +1,72 @@
 import { defineStore } from 'pinia'
 import { words } from '@/assets/wordle_words'
 import { Dictionary } from 'lodash'
-import { filter, map, toLower, difference, intersection, flatten, pickBy } from 'lodash/fp'
+import { filter, map, toLower, difference, intersection, pickBy } from 'lodash/fp'
 
 export const useJourneyStore = defineStore('journey', {
   state: () => ({ 
-    inputWords: Array(7),
-    guessWords: [] as string[],
-    resultRows: [] as GuessRow[],
-    wordleMap: new WordleMap(words)
+    _inputWords: Array(7),
+    _guessWords: [] as string[],
+    _resultRows: [] as GuessRow[],
+    _wordleMap: new WordleMap(words),
+    _displayModal: false,
   }),
   getters: {
-    inputs: state => state.inputWords,
-    guesses: state => state.guessWords,
-    targetWord: state => state.guessWords[state.guessWords.length - 1],
-    results: state => state.resultRows,
+    inputs: state => state._inputWords,
+    guesses: state => state._guessWords,
+    targetWord: state => state._guessWords[state._guessWords.length - 1],
+    results: state => state._resultRows,
+    displayModal : state => state._displayModal,
   },
   actions: {
-    setValidWords(inputWords: string[]) {
-      this.guessWords = map(toLower)(filter( word => /^[a-zA-Z.]{5}$/.test(word), inputWords))
+    setValidWords(_inputWords: string[]) {
+      this._guessWords = map(toLower)(filter( word => /^[a-zA-Z.]{5}$/.test(word), _inputWords))
     },
     resetState(){
-      this.wordleMap.resetWordsLeft()
-      this.resultRows = []
+      this._wordleMap = new WordleMap(words)
+      this._resultRows = []
+    },
+    assembleEmojis(guessSquares: GuessSquare[], remainder: string) {
+      const emojis = map( (o: GuessSquare) => emojiMapping[o.color] )(guessSquares)
+      emojis.push(' ')
+      emojis.push(remainder)
+      return emojis.join("")
     },
     runWords(){
       for (const guess of this.guesses){
         this.runSingleWord(guess)
       }
+      this._resultRows[this._resultRows.length-1].remainder = '✅'
+      this._resultRows[this._resultRows.length-1].emojis = this.assembleEmojis(this._resultRows[this._resultRows.length-1].squares, '✅')
     },
     /**
-     * Check the result of guessing one word and update the results of this.resultRows
+     * Check the result of guessing one word and update the results of this._resultRows
      * @param {string} guessWord The word a user guessed
      */
     runSingleWord(guessWord: string){
       let guessSquares: GuessSquare[] = []
-      // debugger; // eslint-disable-line no-debugger
       for (const [i, char] of [...guessWord].entries()){
-        const result = this.wordleMap.compareLetter(char, i, this.targetWord)
-        this.wordleMap.updateSingleResult(result, char, i)
+        const result = this._wordleMap.compareLetter(char, i, this.targetWord)
+        this._wordleMap.updateSingleResult(result, char, i)
         guessSquares.push({'color': result, 'letter': char})
       }
 
-      guessSquares = this.wordleMap.handleRepeatLetters(guessWord, this.targetWord, guessSquares)
+      guessSquares = this._wordleMap.handleRepeatLetters(guessWord, this.targetWord, guessSquares)
+      const remainder = this._wordleMap.wordsLeft.length.toString()
+      const emojis = this.assembleEmojis(guessSquares, remainder)
 
-      this.resultRows.push({
+      this._resultRows.push({
         'squares': guessSquares,
-        'words': this.wordleMap.wordsLeft,
-        'remainder': this.wordleMap.wordsLeft.length.toString(),
-        'emojis': ''
+        'words': this._wordleMap.wordsLeft,
+        'remainder': remainder,
+        'emojis': emojis
       })
+    },
+    hideModal(){
+      this._displayModal = false;
+    },
+    showModal(){
+      this._displayModal = true;
     },
   },
 })
@@ -59,6 +76,18 @@ enum Color {
   green = "green",
   yellow = "yellow",
   grey = "grey",
+}
+
+enum EmojiColor {
+  green = "🟩",
+  yellow = "🟨",
+  grey = "⬜️",
+}
+
+const emojiMapping: Dictionary<string> = {
+    green: "🟩",
+    yellow: "🟨",
+    grey: "⬜️",
 }
 
 export interface GuessSquare {
@@ -272,8 +301,7 @@ class WordleMap {
    */
   repeatLetterIndexes(word: string): Dictionary<number[]> {
     const letterIndexes = this.getLetterIndexes(word);
-    return pickBy( function(o: number[]) {return o.length > 1 })(letterIndexes)
-
+    return pickBy( (o: number[]) =>  o.length > 1 )(letterIndexes)
   }
 
   /**

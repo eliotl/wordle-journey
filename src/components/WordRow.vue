@@ -16,7 +16,7 @@ div.parent-row
 import { PropType } from 'vue';
 import { Options, Vue } from 'vue-class-component';
 import LetterSquare from './LetterSquare.vue';
-import { useJourneyStore, GuessRow } from '@/store/journey';
+import { GuessRow } from '@/store/journey';
 
 import { shuffle } from 'lodash/fp';
 
@@ -41,10 +41,6 @@ export default class WordRow extends Vue {
     return this.result.words;
   }
   
-  get store ()  {
-    return useJourneyStore();
-  }
-
   get remainder() {
     return this.result.remainder;
   }
@@ -77,7 +73,6 @@ export default class WordRow extends Vue {
   display: table;
   table-layout: fixed;
   border-spacing: 0.25em;
-  /* height: 0.5em; */
 }
 .column {
   display: table-cell;
@@ -95,16 +90,17 @@ export default class WordRow extends Vue {
 }
 
 .wordCloud {
-  width: 15em; 
+  width: 20em;
+  font-size: 0.8em;
   vertical-align: middle;
   text-align: left;
   display: table-cell;
 }
 
 span.remainder{
-    font-size: 1em;
-    font-family: sans-serif;
-    text-align: center;
+  font-size: 1em;
+  font-family: sans-serif;
+  text-align: center;
 }
 
 </style>
