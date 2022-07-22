@@ -6,7 +6,7 @@ div(:class="color")
 <script lang="ts">
 import { PropType } from 'vue';
 import { Options, Vue } from 'vue-class-component';
-import { GuessSquare } from '@/store/journey';
+import { GuessSquare } from '@/data/wordleMap';
 
 @Options({
   props: {

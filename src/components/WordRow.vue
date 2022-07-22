@@ -16,7 +16,7 @@ div.parent-row
 import { PropType } from 'vue';
 import { Options, Vue } from 'vue-class-component';
 import LetterSquare from './LetterSquare.vue';
-import { GuessRow } from '@/store/journey';
+import { GuessRow } from '@/data/wordleMap';
 
 import { shuffle } from 'lodash/fp';
 

@@ -21,10 +21,6 @@ export default class Modal extends Vue {
     return useJourneyStore();
   }
 
-  get displayClass() {
-    return this.modalDisplayed ? 'displayed' : 'hidden'
-  }
-
   get modalDisplayed() {
     return this.store.displayModal;
   }
@@ -52,6 +48,10 @@ export default class Modal extends Vue {
 
 <style scoped>
 
+/**
+ * This modal code is from stack overflow
+ * https://stackoverflow.com/questions/51906819/how-to-set-vertical-scroll-to-modal-popup-on-body
+ */
 /* The Modal (background) */
 .modal {
   position: fixed; /* Stay in place */
@@ -95,7 +95,7 @@ export default class Modal extends Vue {
 
 .list {
   text-align: left;
-  line-height: 1.3em;
+  line-height: 1em;
   margin: auto;
   display: table;
   padding-bottom: 1em;
