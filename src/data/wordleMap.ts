@@ -178,7 +178,7 @@ export class WordleMap {
    * @param letter 
    * @param {number} len The number of occurences of a letter to filter for. Must be > 1.
    */
-  updateWordsByLength(letter: string, len: number){
+  keepSufficientRepeats(letter: string, len: number){
     const repeatMap = this.repeatMap[letter]
     const validWords: string[] = []
     for (const [repeatLen, validWordsByLen] of Object.entries(repeatMap)){
@@ -189,23 +189,43 @@ export class WordleMap {
     this.wordsLeft = intersection(validWords, this.wordsLeft)
   }
 
-  handleRepeatLetters(guessWord: string, targetWord: string, guessSquares: GuessSquare[]) {
+  /**
+   * Removes words from this.wordsLeft that have more than the
+   * given number of occurrences of a letter.
+   * 
+   * @param letter 
+   * @param {number} len 
+   */
+   removeExcessRepeats(letter: string, len: number){
+    const repeatMap = this.repeatMap[letter]
+    const invalidWords: string[] = []
+    for (const [repeatLen, validWordsByLen] of Object.entries(repeatMap)){
+      if (parseInt(repeatLen) > len) {
+        invalidWords.push(...validWordsByLen)
+      }
+    }
+    this.wordsLeft = difference(this.wordsLeft, invalidWords)
+  }
+
+  /**
+   * Updates the remaining words and result squares for guesses with repeated letters.
+   * @param guessWord 
+   * @param targetWord 
+   * @param guessSquares 
+   * @returns {GuessSquare[]} The corrected guess squares
+   */
+  handleRepeatLetters(guessWord: string, targetWord: string, guessSquares: GuessSquare[]): GuessSquare[] {
     const repeatIndexes = this.repeatLetterIndexes(guessWord);
     const targetIndexes = this.getLetterIndexes(targetWord); 
     for (const [char, indexes] of Object.entries(repeatIndexes)){
       const targetLen = char in targetIndexes ? targetIndexes[char].length : 0
       const guessLen = indexes.length
-
       if (guessLen > targetLen && targetLen >= 1){
-        // keep targetLen & (> targetLen)
-        this.updateWordsByLength(char, targetLen)
+        this.removeExcessRepeats(char, targetLen)
         guessSquares = this.greyRepeatedYellows(guessSquares, char, guessLen - targetLen)
-        // change extra yellows to greys right to left
       }
       else if (targetLen >= guessLen && guessLen > 1){
-        // keep guessLen & >>
-        this.updateWordsByLength(char, guessLen)
-        // kill guessLen - 1 & <<
+        this.keepSufficientRepeats(char, guessLen)
       }
     }
     return guessSquares
