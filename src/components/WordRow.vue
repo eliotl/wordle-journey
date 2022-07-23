@@ -85,6 +85,7 @@ export default class WordRow extends Vue {
   width: 1.5em;
   height: 1.5em;  
   margin: 2px;
+  padding-right: 2px;
 }
 
 .words{
@@ -92,13 +93,13 @@ export default class WordRow extends Vue {
 }
 
 .wordCloud {
-  max-width: 10em;
-  width: 10em;
+  width: 15em;
   font-size: 0.8em;
   vertical-align: middle;
   text-align: left;
   display: flex;
   margin: 2px;
+  padding-left: 4px;
 
 }
 
@@ -107,6 +108,12 @@ span.remainder{
   font-family: sans-serif;
   text-align: center;
   vertical-align: middle;
+}
+
+@media only screen and (max-width: 600px) {
+  .wordCloud {
+    width: 10em;
+  }
 }
 
 </style>
