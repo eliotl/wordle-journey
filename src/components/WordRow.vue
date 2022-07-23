@@ -1,13 +1,13 @@
 <template lang="pug">
 div.parent-row
   div.row
-    div.wordCloud
+    //- div.wordCloud
     div.square
     div.column(v-for="square in guessSquares")
       LetterSquare(:square="square")
     div.square
       span.remainder {{ remainder }}
-    div.wordCloud
+    div.wordCloud(v-if="showWords")
       span.words(v-if="showWords") {{displayWords}}
 </template>
 
@@ -64,25 +64,27 @@ export default class WordRow extends Vue {
 <style scoped>
 .parent-row{
   width: 100%;
+  display: inline-block;
+  align-items: right;
+  justify-content: right;
+
+}
+.row {
   display: flex;
+  flex-direction: row;
+  border-spacing: 0.25em;
   align-items: center;
   justify-content: center;
 
 }
-.row {
-  display: table;
-  table-layout: fixed;
-  border-spacing: 0.25em;
-}
 .column {
-  display: table-cell;
+  margin: 2px;
 }
 
 .square {
   width: 1.5em;
   height: 1.5em;  
-  display: table-cell;
-  vertical-align: middle;
+  margin: 2px;
 }
 
 .words{
@@ -90,17 +92,21 @@ export default class WordRow extends Vue {
 }
 
 .wordCloud {
-  width: 20em;
+  max-width: 10em;
+  width: 10em;
   font-size: 0.8em;
   vertical-align: middle;
   text-align: left;
-  display: table-cell;
+  display: flex;
+  margin: 2px;
+
 }
 
 span.remainder{
   font-size: 1em;
   font-family: sans-serif;
   text-align: center;
+  vertical-align: middle;
 }
 
 </style>

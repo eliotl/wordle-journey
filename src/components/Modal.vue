@@ -39,6 +39,7 @@ export default class Modal extends Vue {
 
   copyEmojis(){
     navigator.clipboard.writeText(this.emojiText)
+    this.closeModal();
   }
 
 
