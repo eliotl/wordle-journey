@@ -11,14 +11,15 @@ export const useJourneyStore = defineStore('journey', {
     _guessWords: [] as string[],
     _resultRows: [] as GuessRow[],
     _wordleMap: new WordleMap(words),
-    _displayModal: false,
+    _displayModal: {[ModalName.info]: false, [ModalName.share]: false}
   }),
   getters: {
     inputs: state => state._inputWords,
     guesses: state => state._guessWords,
     targetWord: state => state._guessWords[state._guessWords.length - 1],
     results: state => state._resultRows,
-    displayModal : state => state._displayModal,
+    displayShareModal : state => state._displayModal[ModalName.share],
+    displayInfoModal : state => state._displayModal[ModalName.info],
   },
   actions: {
     setValidWords(_inputWords: string[]) {
@@ -78,14 +79,19 @@ export const useJourneyStore = defineStore('journey', {
         'emojis': emojis
       })
     },
-    hideModal(){
-      this._displayModal = false;
+    hideModal(modalName: ModalName){
+      this._displayModal[modalName] = false;
     },
-    showModal(){
-      this._displayModal = true;
+    showModal(modalName: ModalName){
+      this._displayModal[modalName] = true;
     },
   },
 })
+
+export enum ModalName {
+  info,
+  share,
+}
 
 const emojiMapping: Dictionary<string> = {
   green: "🟩",

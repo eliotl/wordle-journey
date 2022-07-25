@@ -1,0 +1,48 @@
+<template lang="pug">
+.modal(v-if="modalDisplayed" @click="closeModal")
+  .modal-content(@click.stop="")
+    span.close(@click="closeModal") &times;
+    p 
+        | Input each of your guesses from a game of &nbsp;
+        a(href="https://www.nytimes.com/games/wordle/index.html") Wordle
+        | , ending with the correct word.
+    p 
+        | Click 
+        b "Embark" 
+        | to see how many words were still possible after each round. Click 
+        b "Show words" 
+        | to see which words they were!
+
+</template>
+
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
+import { ModalName, useJourneyStore } from '@/store/journey';
+
+@Options({})
+export default class ShareModal extends Vue {
+
+  get store() {
+    return useJourneyStore();
+  }
+
+  get modalDisplayed() {
+    return this.store.displayInfoModal;
+  }
+
+  closeModal(){
+    this.store.hideModal(ModalName.info);
+  }
+
+}
+
+</script>
+
+<style scoped>
+
+a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+</style>

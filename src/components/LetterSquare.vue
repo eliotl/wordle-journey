@@ -44,18 +44,17 @@ export default class LetterSquare extends Vue {
 }
 
 div{
-    width: 1.5em;
-    height: 1.5em;
+    width: 2em;
+    height: 2em;
 }
 
 span.guess-span{
-    font-size: 1.25em;
+    font-size: 1.3em;
     font-family: sans-serif;
     color: white;
     font-style: bold;
     text-transform: uppercase;
-    text-align: center;
-    vertical-align: middle;
+    display: inline-table;
 }
 
 </style>

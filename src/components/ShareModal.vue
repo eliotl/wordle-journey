@@ -3,25 +3,25 @@
   .modal-content(@click.stop="")
     span.close(@click="closeModal()") &times;
     p Share your results with these emojis:
-    .list
-      .row(v-for="emojiRow in emojis") {{emojiRow}}
+    .modalList
+      .modalRow(v-for="emojiRow in emojis") {{emojiRow}}
     button(@click="copyEmojis()") Copy
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { useJourneyStore } from '@/store/journey';
+import { ModalName, useJourneyStore } from '@/store/journey';
 import { map } from 'lodash/fp';
 
 @Options({})
-export default class Modal extends Vue {
+export default class ShareModal extends Vue {
 
   get store() {
     return useJourneyStore();
   }
 
   get modalDisplayed() {
-    return this.store.displayModal;
+    return this.store.displayShareModal;
   }
 
   get emojis() {
@@ -33,7 +33,7 @@ export default class Modal extends Vue {
   }
 
   closeModal(){
-    this.store.hideModal();
+    this.store.hideModal(ModalName.share);
   }
 
   copyEmojis(){
@@ -46,7 +46,7 @@ export default class Modal extends Vue {
 
 </script>
 
-<style scoped>
+<style >
 
 /**
  * This modal code is from stack overflow
@@ -89,11 +89,11 @@ export default class Modal extends Vue {
   cursor: pointer;
 }
 
-.row{
+.modalRow{
   display: table-row;
 }
 
-.list {
+.modalList {
   text-align: left;
   line-height: 1em;
   margin: auto;

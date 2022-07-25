@@ -1,5 +1,7 @@
 <template lang="pug">
 div
+  p.info
+    span.infoButton(@click="openInfoModal") ⓘ
   .inputRow(v-for="(_, index) in Array(7)")
     input(
       @click="$event.target?.select()",
@@ -15,20 +17,23 @@ div
     WordRow(:result="result", :showWords="wordsVisible")
   .spacer
   .spacer
-  button(v-if="displayButton" @click="openModal") Share
-  Modal
+  button(v-if="displayButton" @click="openShareModal") Share
+  ShareModal
+  InfoModal
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import WordRow from './WordRow.vue';
-import Modal from './Modal.vue';
-import { useJourneyStore } from '@/store/journey';
+import ShareModal from './ShareModal.vue';
+import { ModalName, useJourneyStore } from '@/store/journey';
+import InfoModal from './InfoModal.vue';
 
 @Options({
   components: {
     WordRow,
-    Modal,
+    ShareModal,
+    InfoModal,
   },
 })
 export default class Journey extends Vue {
@@ -57,8 +62,23 @@ export default class Journey extends Vue {
       return this.wordsVisible ? 'Hide words' : 'Show words';
     }
 
-    openModal() {
-      this.store.showModal();
+    mounted() {
+      window.addEventListener('keydown', this.closeModals)
+    }
+
+    openShareModal() {
+      this.store.showModal(ModalName.share);
+    }
+
+    openInfoModal() {
+      this.store.showModal(ModalName.info);
+    }
+
+    closeModals(event: KeyboardEvent) {
+      if (event.code == 'Escape'){
+        this.store.hideModal(ModalName.info);
+        this.store.hideModal(ModalName.share);
+      }
     }
 
     toggleWordsVisibility() {
@@ -70,7 +90,9 @@ export default class Journey extends Vue {
         this.store.resetState();
       }
       this.store.setValidWords(this.store.inputs);
-      this.store.runWords();
+      if (this.guesses.length > 0){
+        this.store.runWords();
+      }
     }
 }
 
@@ -82,6 +104,24 @@ export default class Journey extends Vue {
 .spacer{
     height: 1em;
 }
+ 
+.info {
+  margin-bottom: 1.5em;
+}
+
+.infoButton {
+  opacity: 0.7;
+  color: grey;
+  font-size: small;
+}
+
+.infoButton:hover,
+.infoButton:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 
 input{
   text-transform: uppercase;
