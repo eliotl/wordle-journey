@@ -2,9 +2,10 @@
 header#masthead.site-header(role="banner")
   SiteHeader
 
-h1 Wordle Journey
+.content
+  h1 Wordle Journey
 
-Journey
+  Journey
 
 </template>
 
@@ -39,5 +40,26 @@ export default class App extends Vue {
 h1 {
   color: #4d4c4c;
 }
+
+.content{
+  max-width: 1000px;
+}
+
+
+@media only screen and (min-width: 1200px) {
+  .content {
+    zoom: 1.25;
+    max-width: 820px;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  .content {
+    zoom: 1.5;
+    max-width: 680px;
+  }
+}
+
+
 
 </style>
