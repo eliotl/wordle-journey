@@ -1,7 +1,6 @@
 <template lang="pug">
 div.parent-row
   div.row
-    //- div.wordCloud
     div.square
     div.column(v-for="square in guessSquares")
       LetterSquare(:square="square")

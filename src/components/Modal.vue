@@ -1,5 +1,4 @@
 <template lang="pug">
-//- .modal(:class="displayClass")
 .modal(v-if="modalDisplayed" @click="closeModal")
   .modal-content(@click.stop="")
     span.close(@click="closeModal()") &times;
