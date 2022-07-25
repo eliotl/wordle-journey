@@ -49,16 +49,32 @@ h1 {
 @media only screen and (min-width: 1200px) {
   .content {
     zoom: 1.25;
-    max-width: 820px;
+    max-width: 900px;
   }
 }
 
 @media only screen and (min-width: 1600px) {
   .content {
     zoom: 1.5;
-    max-width: 680px;
+    max-width: 800px;
   }
 }
+
+@media only screen and (min-width: 2000) {
+  .content {
+    zoom: 1.75;
+    max-width: 1100px;
+  }
+}
+
+
+@media only screen and (min-width: 2400) {
+  .content {
+    zoom: 1.75;
+    max-width: 1400px;
+  }
+}
+
 
 
 
