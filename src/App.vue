@@ -3,8 +3,6 @@ header#masthead.site-header(role="banner")
   SiteHeader
 
 .content
-  h1 Wordle Journey
-
   Journey
 
 </template>
@@ -45,7 +43,7 @@ h1 {
 
 .content{
   font-size: 2rem;
-  max-width: 1600px;
+  margin-top: 5vw;
 }
 
 @media only screen and (max-width: 700px) {
@@ -54,6 +52,7 @@ h1 {
   }
   .content {
     font-size: 1.1rem;
+    margin-top: 15vw;
   }
   h1 {
     font-size: 1.5rem;

@@ -1,7 +1,5 @@
 <template lang="pug">
 div
-  p.info
-    span.infoButton(@click="openInfoModal") ⓘ
   .inputRow(v-for="(_, index) in Array(7)")
     input(
       @click="$event.target?.select()",
@@ -70,10 +68,6 @@ export default class Journey extends Vue {
       this.store.showModal(ModalName.share);
     }
 
-    openInfoModal() {
-      this.store.showModal(ModalName.info);
-    }
-
     closeModals(event: KeyboardEvent) {
       if (event.code == 'Escape'){
         this.store.hideModal(ModalName.info);
@@ -105,22 +99,6 @@ export default class Journey extends Vue {
     height: 1em;
 }
  
-.info {
-  margin-bottom: 1.5em;
-}
-
-.infoButton {
-  opacity: 0.7;
-  color: grey;
-  font-size: 1.2rem;
-}
-
-.infoButton:hover,
-.infoButton:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
 
 .inputRow{
   line-height: 1rem;
@@ -133,7 +111,6 @@ input{
   text-align: center;
   font-family: monospace;
   width: 6em;
-  /* font-size: 1.2 em; */
   font-size: 1.5rem;
   line-height: 1.2rem;
   background: WhiteSmoke;
@@ -157,9 +134,6 @@ button {
   border: 0.5px groove;
   }
 
-  .infoButton {
-    font-size: 0.9rem;
-  }
 }
 
 

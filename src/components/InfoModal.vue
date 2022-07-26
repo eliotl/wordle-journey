@@ -3,14 +3,15 @@
   .modal-content(@click.stop="")
     span.close(@click="closeModal") &times;
     p 
-        | Input each of your guesses from a game of &nbsp;
+        | Wordle Journey shows you how close you really were after each round!
+        | Input each of your guesses from a game of 
         a(href="https://www.nytimes.com/games/wordle/index.html") Wordle
         | , ending with the correct word.
     p 
         | Click 
         b "Embark" 
-        | to see how many words were still possible after each round.
-    p Click 
+        | to see how many words were still possible after each.
+    p Then, click 
         b "Show words" 
         | to see which words they were!
 
@@ -47,7 +48,7 @@ p {
 
 @media only screen and (max-width: 700px) {
     p {
-        font-size: 1.2rem;
+        font-size: 1.05rem;
     }
 }
 
