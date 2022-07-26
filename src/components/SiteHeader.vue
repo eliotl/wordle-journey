@@ -40,4 +40,13 @@ p {
     margin-top: 0.2em;
 }
 
+@media only screen and (max-width: 700px) {
+    .site-title{
+        font-size: 1.3rem;
+    }
+    .site-branding {
+        padding-bottom: 0;
+    }
+}
+
 </style>

@@ -74,6 +74,12 @@ export default class ShareModal extends Vue {
   width: 40%; /* Could be more or less, depending on screen size */
 }
 
+@media only screen and (max-width: 700px) {
+  .modal-content {
+    width: 80%;
+  }
+}
+
 /* The Close Button */
 .close {
   color: #aaa;

@@ -9,7 +9,8 @@
     p 
         | Click 
         b "Embark" 
-        | to see how many words were still possible after each round. Click 
+        | to see how many words were still possible after each round.
+    p Click 
         b "Show words" 
         | to see which words they were!
 
@@ -39,6 +40,16 @@ export default class ShareModal extends Vue {
 </script>
 
 <style scoped>
+
+p {
+    font-size: 1.4rem;
+}
+
+@media only screen and (max-width: 700px) {
+    p {
+        font-size: 1.2rem;
+    }
+}
 
 a {
     text-decoration: none;

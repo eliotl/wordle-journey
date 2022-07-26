@@ -35,46 +35,30 @@ export default class App extends Vue {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  margin-bottom: 60px;
 }
 
 h1 {
   color: #4d4c4c;
+  font-size: 3.5rem;
 }
 
 .content{
-  max-width: 1000px;
+  font-size: 2rem;
+  max-width: 1600px;
 }
 
-
-@media only screen and (min-width: 1200px) {
+@media only screen and (max-width: 700px) {
+  #app {
+    margin-top: 20px;
+  }
   .content {
-    zoom: 1.25;
-    max-width: 900px;
+    font-size: 1.1rem;
+  }
+  h1 {
+    font-size: 1.5rem;
   }
 }
-
-@media only screen and (min-width: 1600px) {
-  .content {
-    zoom: 1.5;
-    max-width: 800px;
-  }
-}
-
-@media only screen and (min-width: 2000) {
-  .content {
-    zoom: 1.75;
-    max-width: 1100px;
-  }
-}
-
-
-@media only screen and (min-width: 2400) {
-  .content {
-    zoom: 1.75;
-    max-width: 1400px;
-  }
-}
-
 
 
 

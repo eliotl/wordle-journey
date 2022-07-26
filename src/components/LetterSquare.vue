@@ -50,11 +50,23 @@ div{
 
 span.guess-span{
     font-size: 1.3em;
+    font-weight: bold;
     font-family: sans-serif;
     color: white;
     font-style: bold;
     text-transform: uppercase;
     display: inline-table;
+}
+
+@media only screen and (max-width: 700px) {
+  div {
+    width: 2rem;
+    height: 2rem;
+  }
+  span.guess-span {
+    font-size: 1.35rem;
+  }
+  
 }
 
 </style>

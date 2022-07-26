@@ -112,7 +112,7 @@ export default class Journey extends Vue {
 .infoButton {
   opacity: 0.7;
   color: grey;
-  font-size: small;
+  font-size: 1.2rem;
 }
 
 .infoButton:hover,
@@ -122,6 +122,10 @@ export default class Journey extends Vue {
   cursor: pointer;
 }
 
+.inputRow{
+  line-height: 1rem;
+  margin-bottom: 2px;
+}
 
 input{
   text-transform: uppercase;
@@ -129,15 +133,34 @@ input{
   text-align: center;
   font-family: monospace;
   width: 6em;
-  font-size: 1.2 em;
+  /* font-size: 1.2 em; */
+  font-size: 1.5rem;
+  line-height: 1.2rem;
   background: WhiteSmoke;
   border: 0.5px groove;
 }
 
 button {
-    font-variant: small-caps;
+    /* font-variant: small-caps; */
+    font-size: 1.1rem;
 }
 
+
+@media only screen and (max-width: 700px) {
+  button {
+    font-size: 0.8rem;
+  }
+  input {
+  width: 5rem;
+  font-size: 1.1rem;
+  line-height: 1.1rem;
+  border: 0.5px groove;
+  }
+
+  .infoButton {
+    font-size: 0.9rem;
+  }
+}
 
 
 
